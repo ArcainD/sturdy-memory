@@ -1,6 +1,5 @@
 import requests
 import bs4
-import time
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) '
                          'Gecko/20100101 Firefox/96.0',
@@ -36,16 +35,13 @@ def habr_scraping():
         href = article.find('h2').find('a')['href']
         article_link = f'https://habr.com{href}'
         article = get_request(article_link)
-        article_text = article.find('div', id='post-content-body').text
-        for words in keywords:
-            if words in article_text.lower():
-                title = article.find('h1').text
-                date = article.find(
-                    'span', class_='tm-article-snippet__datetime-published'
-                ).find('time')['title']
-                print(f'{date}; {title}; {article_link}')
-                break
-    time.sleep(1)
+        article_text = article.find('div', id='post-content-body').text.lower()
+        if set(keywords) & set(article_text.split()):
+            title = article.find('h1').text
+            date = article.find(
+                'span', class_='tm-article-snippet__datetime-published'
+            ).find('time')['title']
+            print(f'{date} | {title} | {article_link}')
 
 
 if __name__ == '__main__':
